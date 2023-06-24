@@ -4,9 +4,6 @@
     "devdeploy": "sls deploy --stage dev --aws-profile dev",
     "proddeploy": "sls deploy --stage prod --aws-profile prod"
   },
-  "devDependencies": {
-    "serverless-iam-roles-per-function": "^3.2.0"
-  },
   "dependencies": {
     "uuid": "^9.0.0",
     "serverless-iam-roles-per-function": "^3.2.0"
