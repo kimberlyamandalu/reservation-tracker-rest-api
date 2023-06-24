@@ -1,5 +1,5 @@
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const client = new DynamoDBClient({});
 const tableName = process.env.DYNAMO_TABLE
