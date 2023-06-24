@@ -1,6 +1,9 @@
 service: reservation-tracker-rest-api
 frameworkVersion: '3'
 
+org: kimberlyamandalu
+app: reservation-tracker-rest-api
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -12,7 +15,7 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  
+
 functions:
   createApi:
     handler: src/create.createReservation
