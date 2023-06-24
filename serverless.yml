@@ -1,0 +1,84 @@
+service: reservation-tracker-rest-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  endpointType: REGIONAL
+  environment:
+    DYNAMODB_TABLE: ${sls:stage}.ReservationsTable
+  httpApi:
+    cors: true
+  tracing:
+    apiGateway: true
+    lambda: true
+  
+functions:
+  createApi:
+    handler: src/create.createReservation
+    events:
+      - httpApi:
+          method: post
+          path: /reservations/create
+    iamRoleStatementsName: CreateReservationLambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+  updateApi:
+    handler: src/update.updateReservation
+    events:
+      - httpApi:
+          method: put
+          path: /reservations/{reservation-id}
+    iamRoleStatementsName: UpdateReservationLambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.DYNAMODB_TABLE}"
+  
+  deleteApi:
+    handler: src/delete.deleteReservation
+    events:
+      - httpApi:
+          method: delete
+          path: /reservations/{reservation-id}
+    iamRoleStatementsName: DeleteReservationLambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:DeleteItem
+        Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.DYNAMODB_TABLE}"
+  
+  getApi:
+    handler: src/get.getReservation
+    events:
+      - httpApi:
+          method: get
+          path: /reservations/{reservation-id}
+    iamRoleStatementsName: GetReservationLambdaRole
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:GetItem
+        Resource: "arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+resources:
+  Resources:
+    reservationsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: ReservationId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ReservationId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+plugins:
+  - serverless-iam-roles-per-function
