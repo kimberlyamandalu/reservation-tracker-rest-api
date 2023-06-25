@@ -1,5 +1,8 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
-import { v4 as uuidv4 } from "uuid"; // ES Modules import
+// import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
+// import { v4 as uuidv4 } from "uuid"; // ES Modules import
+
+const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
+const { uuidv4 } = require("uuid").v4;
 
 const client = new DynamoDBClient({});
 const tableName = process.env.DYNAMO_TABLE
@@ -7,7 +10,7 @@ const responseHeaders = {
 	"Content-Type": "application/json",
 };
 
-export const createReservation = async (event) => {
+const createReservation = async (event) => {
 	console.log(event);
 
 	// retrieve request body from event object
