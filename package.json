@@ -1,5 +1,10 @@
 {
   "type": "module",
+  "name": "Reservation Tracker CRUD APIs",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "devdeploy": "sls deploy --stage dev --aws-profile dev",
     "proddeploy": "sls deploy --stage prod --aws-profile prod"
