@@ -9,14 +9,14 @@ const responseHeaders = {
 export const getReservation = async (event) => {
 	console.log(event);
 
-	let requestBody = JSON.parse(event.body);
-	console.log(requestBody);
+	const reservationId = event.pathParameters.reservationId
+	console.log(`Reservation ID: ${reservationId} will be deleted`)
 
 	const recordKey = {
 		TableName: tableName,
 		"Key": {
 			"ReservationId": {
-				"S": requestBody.reservationId
+				"S": reservationId
 			}
 		}
 	};

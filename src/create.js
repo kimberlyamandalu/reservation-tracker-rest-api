@@ -2,7 +2,7 @@
 // import { v4 as uuidv4 } from "uuid"; // ES Modules import
 
 const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
-const { uuidv4 } = require("uuid").v4;
+const uuid = require("uuid");
 
 const client = new DynamoDBClient({});
 const tableName = process.env.DYNAMO_TABLE
@@ -17,11 +17,11 @@ module.exports.createReservation = async (event) => {
 	let requestBody = JSON.parse(event.body);
 	console.log(requestBody);
 
-	const reservationId = uuidv4();
+	const reservationId = uuid.v4();
 	// convert request to dynamodb input format
 	const record = {
 		TableName: tableName,
-		"Key": {
+		"Item": {
 			"ReservationId": {
 				"S": reservationId
 			},

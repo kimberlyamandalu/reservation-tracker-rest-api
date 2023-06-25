@@ -35,7 +35,7 @@ functions:
     events:
       - httpApi:
           method: put
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: UpdateReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow
@@ -48,7 +48,7 @@ functions:
     events:
       - httpApi:
           method: delete
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: DeleteReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow
@@ -61,7 +61,7 @@ functions:
     events:
       - httpApi:
           method: get
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: GetReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow

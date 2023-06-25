@@ -7,41 +7,45 @@ const responseHeaders = {
 };
 
 export const updateReservation = async (event) => {
-    console.log(event);
+	console.log(event);
 
-    // retrieve request body from event object
-    let requestBody = JSON.parse(event.body);
-    console.log(requestBody);
+	// retrieve path param
+	const reservationId = event.pathParameters.reservationId
+	console.log(`Reservation ID: ${reservationId} will be updated`)
 
-    // convert request to dynamodb input format
-    const record = {
-        TableName: tableName,
-        "Key": {
-            "ReservationId": {
-                "S": requestBody.reservationId
-            },
-            "ReservationName": {
-                "S": requestBody.reservationName
-            },
-            "ReservationDateTime": {
-                "S": requestBody.reservationDateTime
-            },
-            "PartySize": {
-                "N": requestBody.partySize
-            }
-        }
-    };
+	// retrieve request body from event object
+	let requestBody = JSON.parse(event.body);
+	console.log(requestBody);
 
-    const command = new PutItemCommand(record);
-    const createResponse = await client.send(command);
+	// convert request to dynamodb input format
+	const record = {
+		TableName: tableName,
+		Item: {
+				"ReservationId": {
+						"S": reservationId
+				},
+				"ReservationName": {
+						"S": requestBody.reservationName
+				},
+				"ReservationDateTime": {
+						"S": requestBody.reservationDateTime
+				},
+				"PartySize": {
+						"N": requestBody.partySize
+				}
+		}
+	};
 
-    console.log(createResponse);
+	const command = new PutItemCommand(record);
+	const createResponse = await client.send(command);
 
-    const returnResponse = {
-        statusCode: createResponse.$metadata.httpStatusCode,
-        body: JSON.stringify(`Reservation ID: ${reservationId} updated successfully`),
-        responseHeaders
-    };
+	console.log(createResponse);
 
-    return returnResponse;
+	const returnResponse = {
+		statusCode: createResponse.$metadata.httpStatusCode,
+		body: JSON.stringify(`Reservation ID: ${reservationId} updated successfully`),
+		responseHeaders
+	};
+
+	return returnResponse;
 };
