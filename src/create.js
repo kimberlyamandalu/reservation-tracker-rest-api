@@ -10,7 +10,7 @@ const responseHeaders = {
 	"Content-Type": "application/json",
 };
 
-const createReservation = async (event) => {
+module.exports.createReservation = async (event) => {
 	console.log(event);
 
 	// retrieve request body from event object
