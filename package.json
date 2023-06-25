@@ -1,5 +1,4 @@
 {
-  "type": "module",
   "name": "Reservation Tracker CRUD APIs",
   "version": "1.0.0",
   "engines": {
