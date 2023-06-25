@@ -1,15 +1,14 @@
 {
+  "type": "module",
   "name": "reservation-tracker-crud-apis",
   "version": "1.0.0",
-  "engines": {
-    "node": ">=18.0.0"
-  },
   "scripts": {
     "devdeploy": "sls deploy --stage dev --aws-profile dev",
     "proddeploy": "sls deploy --stage prod --aws-profile prod"
   },
   "dependencies": {
-    "uuid": "^9.0.0",
-    "serverless-iam-roles-per-function": "^3.2.0"
+    "@aws-sdk/client-dynamodb": "^3.359.0",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "uuid": "^9.0.0"
   }
 }
