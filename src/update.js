@@ -1,13 +1,13 @@
-import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
+const { DynamoDBClient, UpdateItemCommand } = require("@aws-sdk/client-dynamodb");
 
-const client = new DynamoDBClient({});
+const ddbClient = new DynamoDBClient({});
 const tableName = process.env.DYNAMO_TABLE
 const responseHeaders = {
-    "Content-Type": "application/json",
+	"Content-Type": "application/json",
 };
 
-export const updateReservation = async (event) => {
-	console.log(event);
+module.exports.updateReservation = async (event) => {
+	console.log("Event:", event);
 
 	// retrieve path param
 	const reservationId = event.pathParameters.reservationId
@@ -15,37 +15,63 @@ export const updateReservation = async (event) => {
 
 	// retrieve request body from event object
 	let requestBody = JSON.parse(event.body);
-	console.log(requestBody);
+	console.log("Request Body:", requestBody);
 
-	// convert request to dynamodb input format
+	// setup update item parameters
+	// will only update item if it exists (i.e., prevents new item from being created)
+	// returns updated item with new attribute values
 	const record = {
-		TableName: tableName,
-		Item: {
-				"ReservationId": {
-						"S": reservationId
-				},
-				"ReservationName": {
-						"S": requestBody.reservationName
-				},
-				"ReservationDateTime": {
-						"S": requestBody.reservationDateTime
-				},
-				"PartySize": {
-						"N": requestBody.partySize
-				}
-		}
+		"TableName": tableName,
+		"Key": {
+			"ReservationId": {
+				"S": reservationId
+			}
+		},
+		"ConditionExpression": "attribute_exists(ReservationId)",
+		"ExpressionAttributeNames": {
+			"#RN": "ReservationName",
+			"#RDT": "ReservationDateTime",
+			"#PS": "PartySize"
+		},
+		"ExpressionAttributeValues": {
+			":rn": {
+				"S": requestBody.reservationName
+			},
+			":rdt": {
+				"S": requestBody.reservationDateTime
+			},
+			":ps": {
+				"N": requestBody.partySize.toString()
+			}
+		},
+		"UpdateExpression": "SET #RN = :rn, #RDT = :rdt, #PS = :ps",
+		"ReturnValues": "ALL_NEW"
 	};
 
-	const command = new PutItemCommand(record);
-	const createResponse = await client.send(command);
+	const command = new UpdateItemCommand(record);
+	try {
+		const updateResponse = await ddbClient.send(command);
+		console.log("Update Item Response:", updateResponse);
 
-	console.log(createResponse);
+		const updatedItem = updateResponse.Attributes;
+		var responseBody = {
+			"reservationId": updatedItem.ReservationId.S,
+			"reservationName": updatedItem.ReservationName.S,
+			"reservationDateTime": updatedItem.ReservationDateTime.S,
+			"partySize": parseInt(updatedItem.PartySize.N)
+		};
+		var statusCode = updateResponse.$metadata.httpStatusCode;
+	}
+	catch (ConditionalCheckFailedException) {
+		var statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
+		var responseBody = `Reservation ID ${reservationId} not found. Nothing to update.`;
+	}
 
 	const returnResponse = {
-		statusCode: createResponse.$metadata.httpStatusCode,
-		body: JSON.stringify(`Reservation ID: ${reservationId} updated successfully`),
-		responseHeaders
+		statusCode: statusCode,
+		body: JSON.stringify(responseBody),
+		headers: responseHeaders
 	};
 
 	return returnResponse;
-};
+}

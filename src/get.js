@@ -1,16 +1,17 @@
-import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
+const { DynamoDBClient, GetItemCommand } = require("@aws-sdk/client-dynamodb");
 
-const client = new DynamoDBClient({});
+const ddbClient = new DynamoDBClient({});
 const tableName = process.env.DYNAMO_TABLE;
 const responseHeaders = {
 	"Content-Type": "application/json",
 };
 
-export const getReservation = async (event) => {
-	console.log(event);
+module.exports.getReservation = async (event) => {
+	console.log("Event:", event);
 
+	// retrieve Reservation ID value from Path Params
 	const reservationId = event.pathParameters.reservationId
-	console.log(`Reservation ID: ${reservationId} will be deleted`)
+	console.log(`Retrieving Reservation ID: ${reservationId}...`)
 
 	const recordKey = {
 		TableName: tableName,
@@ -22,23 +23,31 @@ export const getReservation = async (event) => {
 	};
 
 	const command = new GetItemCommand(recordKey);
-	const getResponse = await client.send(command);
-	console.log(getResponse);
+	const getResponse = await ddbClient.send(command);
+	console.log("Get Item Response:", getResponse);
 
-	const item = getResponse.Item;
-	console.log(item);
+	// assign null when item not found
+	const item = getResponse.Item || null;
 
-	const responseBody = {
-		"reservationId": item.ReservationId.S,
-		"reservationName": item.ReservationName.S,
-		"reservationDateTime": item.ReservationDateTime.S,
-		"partySize": item.partySize.N
+	if (item !== null) {
+		console.log("Retrieved Dynamo Record:", item);
+
+		// format response body to be returned
+		var responseBody = {
+			"reservationId": item.ReservationId.S,
+			"reservationName": item.ReservationName.S,
+			"reservationDateTime": item.ReservationDateTime.S,
+			"partySize": item.PartySize.N
+		};
+	}
+	else
+		var responseBody = `Reservation ID ${reservationId} not found. Please provide a valid ID.`;
+
+	const returnResponse = {
+		statusCode: getResponse.$metadata.httpStatusCode,
+		body: JSON.stringify(responseBody),
+		headers: responseHeaders
 	};
-	const response = {
-		statusCode: 200,
-		body: responseBody,
-		responseHeaders
-	};
 
-	return response;
-};
+	return returnResponse;
+}

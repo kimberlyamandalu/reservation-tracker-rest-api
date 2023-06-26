@@ -1,26 +1,26 @@
-// import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"; // ES Modules import
-// import { v4 as uuidv4 } from "uuid"; // ES Modules import
-
 const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const uuid = require("uuid");
 
-const client = new DynamoDBClient({});
-const tableName = process.env.DYNAMO_TABLE
+const ddbClient = new DynamoDBClient({});
+const tableName = process.env.DYNAMO_TABLE;
 const responseHeaders = {
 	"Content-Type": "application/json",
 };
 
 module.exports.createReservation = async (event) => {
-	console.log(event);
+	console.log("Event:", event);
 
 	// retrieve request body from event object
 	let requestBody = JSON.parse(event.body);
-	console.log(requestBody);
+	console.log("Request Body:", requestBody);
 
+	// generate uuid value to assign as ID for new reservation record
 	const reservationId = uuid.v4();
+
 	// convert request to dynamodb input format
 	const record = {
-		TableName: tableName,
+		"TableName": tableName,
+		"ConditionExpression": "attribute_not_exists(ReservationId)", // prevents overwriting existing reservation
 		"Item": {
 			"ReservationId": {
 				"S": reservationId
@@ -32,21 +32,30 @@ module.exports.createReservation = async (event) => {
 				"S": requestBody.reservationDateTime
 			},
 			"PartySize": {
-				"N": requestBody.partySize
+				"N": requestBody.partySize.toString()
 			}
 		}
 	};
 
 	const command = new PutItemCommand(record);
-	const createResponse = await client.send(command);
 
-	console.log(createResponse);
+	try {
+		const createResponse = await ddbClient.send(command);
+		console.log("Create Item Response:", createResponse);
+
+		var statusCode = createResponse.$metadata.httpStatusCode;
+		var responseBody = `Reservation created with ID: ${reservationId}`
+	}
+	catch (ConditionalCheckFailedException) {
+		var statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
+		var responseBody = `Reservation ID: ${reservationId} already exists`
+	}
 
 	const returnResponse = {
-		statusCode: createResponse.$metadata.httpStatusCode,
-		body: JSON.stringify(`Reservation ID: ${reservationId}`),
-		responseHeaders
+		statusCode: statusCode,
+		body: JSON.stringify(responseBody),
+		headers: responseHeaders
 	};
 
 	return returnResponse;
-};
+}
