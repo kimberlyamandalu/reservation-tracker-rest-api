@@ -1,6 +1,9 @@
 service: reservation-tracker-rest-api
 frameworkVersion: '3'
 
+org: kimberlyamandalu
+app: reservation-tracker-rest-api
+
 provider:
   name: aws
   runtime: nodejs18.x
@@ -12,7 +15,7 @@ provider:
   tracing:
     apiGateway: true
     lambda: true
-  
+
 functions:
   createApi:
     handler: src/create.createReservation
@@ -32,7 +35,7 @@ functions:
     events:
       - httpApi:
           method: put
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: UpdateReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow
@@ -45,7 +48,7 @@ functions:
     events:
       - httpApi:
           method: delete
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: DeleteReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow
@@ -58,7 +61,7 @@ functions:
     events:
       - httpApi:
           method: get
-          path: /reservations/{reservation-id}
+          path: /reservations/{reservationId}
     iamRoleStatementsName: GetReservationLambdaRole
     iamRoleStatements:
       - Effect: Allow

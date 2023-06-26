@@ -1,0 +1,14 @@
+{
+    "resource": "/reservations",
+    "path": "/reservations/{reservationId}",
+    "httpMethod": "PUT",
+    "requestContext": {
+        "resourcePath": "/",
+        "httpMethod": "PUT"
+    },
+    "pathParameters": {
+        "reservationId": "7eb59b4f-3de9-41e3-bb6a-6e24bbba2dee"
+    },
+    "body": "{\"reservationName\":\"Yoyoyo\",\"reservationDateTime\":\"2023-08-08 08:00 AM\",\"partySize\":5}",
+    "isBase64Encoded": false
+}

@@ -1,0 +1,14 @@
+{
+    "resource": "/reservations",
+    "path": "/reservations/{reservationId}",
+    "httpMethod": "GET",
+    "requestContext": {
+        "resourcePath": "/",
+        "httpMethod": "GET"
+    },
+    "pathParameters": {
+        "reservationId": "7eb59b4f-3de9-41e3-bb6a-6e24bbba2dee"
+    },
+    "body": {},
+    "isBase64Encoded": false
+}

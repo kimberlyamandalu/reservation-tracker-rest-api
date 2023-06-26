@@ -1,0 +1,53 @@
+const { DynamoDBClient, GetItemCommand } = require("@aws-sdk/client-dynamodb");
+
+const ddbClient = new DynamoDBClient({});
+const tableName = process.env.DYNAMO_TABLE;
+const responseHeaders = {
+	"Content-Type": "application/json",
+};
+
+module.exports.getReservation = async (event) => {
+	console.log("Event:", event);
+
+	// retrieve Reservation ID value from Path Params
+	const reservationId = event.pathParameters.reservationId
+	console.log(`Retrieving Reservation ID: ${reservationId}...`)
+
+	const recordKey = {
+		TableName: tableName,
+		"Key": {
+			"ReservationId": {
+				"S": reservationId
+			}
+		}
+	};
+
+	const command = new GetItemCommand(recordKey);
+	const getResponse = await ddbClient.send(command);
+	console.log("Get Item Response:", getResponse);
+
+	// assign null when item not found
+	const item = getResponse.Item || null;
+
+	if (item !== null) {
+		console.log("Retrieved Dynamo Record:", item);
+
+		// format response body to be returned
+		var responseBody = {
+			"reservationId": item.ReservationId.S,
+			"reservationName": item.ReservationName.S,
+			"reservationDateTime": item.ReservationDateTime.S,
+			"partySize": item.PartySize.N
+		};
+	}
+	else
+		var responseBody = `Reservation ID ${reservationId} not found. Please provide a valid ID.`;
+
+	const returnResponse = {
+		statusCode: getResponse.$metadata.httpStatusCode,
+		body: JSON.stringify(responseBody),
+		headers: responseHeaders
+	};
+
+	return returnResponse;
+}
