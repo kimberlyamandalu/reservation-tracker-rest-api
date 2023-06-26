@@ -49,7 +49,6 @@ module.exports.createReservation = async (event) => {
 		responseBody = `Reservation created with ID: ${reservationId}`;
 	}
 	catch (ConditionalCheckFailedException) {
-		console.log(ConditionalCheckFailedException);
 		statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
 		responseBody = `Reservation ID: ${reservationId} already exists`;
 	}
