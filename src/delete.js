@@ -1,7 +1,7 @@
 const { DynamoDBClient, DeleteItemCommand } = require("@aws-sdk/client-dynamodb");
 
 const ddbClient = new DynamoDBClient({});
-const tableName = process.env.DYNAMO_TABLE;
+const tableName = process.env.DYNAMODB_TABLE;
 const responseHeaders = {
 	"Content-Type": "application/json",
 };
@@ -25,17 +25,18 @@ module.exports.deleteReservation = async (event) => {
 	};
 
 	const command = new DeleteItemCommand(recordKey);
-
+	var statusCode;
+	var responseBody;
 	try {
 		const deleteResponse = await ddbClient.send(command);
 		console.log("Delete Item Response:", deleteResponse);
 
-		var statusCode = deleteResponse.$metadata.httpStatusCode;
-		var responseBody = `Reservation with ID ${reservationId} cancelled`;
+		statusCode = deleteResponse.$metadata.httpStatusCode;
+		responseBody = `Reservation with ID ${reservationId} cancelled`;
 	}
 	catch (ConditionalCheckFailedException) {
-		var statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
-		var responseBody = `Reservation ID: ${reservationId} not found. Nothing to delete`;
+		statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
+		responseBody = `Reservation ID: ${reservationId} not found. Nothing to delete`;
 	}
 
 	const returnResponse = {
@@ -45,4 +46,4 @@ module.exports.deleteReservation = async (event) => {
 	};
 
 	return returnResponse;
-}
+};
