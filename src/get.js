@@ -28,6 +28,7 @@ module.exports.getReservation = async (event) => {
 
 	// assign null when item not found
 	const item = getResponse.Item || null;
+	console.log("Item:", item);
 	var responseBody;
 
 	if (item !== null) {
