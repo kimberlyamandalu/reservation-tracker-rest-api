@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "devdeploy": "sls deploy --stage dev --aws-profile dev",
-    "proddeploy": "sls deploy --stage prod --aws-profile prod"
+    "proddeploy": "sls deploy --stage prod --aws-profile prod",
+    "localinvokecreate": "serverless invoke local --function createApi --path ./events/create.json",
+    "localinvokeget": "serverless invoke local --function getApi --path ./events/get.json",
+    "localinvokeupdate": "serverless invoke local --function updateApi --path ./events/update.json",
+    "localinvokedelete": "serverless invoke local --function deleteApi --path ./events/delete.json"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.359.0",
