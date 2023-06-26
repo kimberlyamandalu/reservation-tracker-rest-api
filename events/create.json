@@ -6,6 +6,6 @@
         "resourcePath": "/",
         "httpMethod": "POST"
     },
-    "body": "{\"reservationName\":\"Kim\",\"reservationDateTime\":\"2023-07-07 08:00 AM\",\"partySize\":\"8\"}",
+    "body": "{\"reservationName\":\"Yoyo\",\"reservationDateTime\":\"2023-07-08 08:00 AM\",\"partySize\":5}",
     "isBase64Encoded": false
 }
