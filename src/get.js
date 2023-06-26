@@ -10,7 +10,7 @@ module.exports.getReservation = async (event) => {
 	console.log("Event:", event);
 
 	// retrieve Reservation ID value from Path Params
-	const reservationId = event.pathParameters.reservationId;
+	const reservationId = event.path.reservationId;
 	console.log(`Retrieving Reservation ID: ${reservationId}...`);
 
 	const recordKey = {
