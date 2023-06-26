@@ -2,7 +2,7 @@ const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb");
 const uuid = require("uuid");
 
 const ddbClient = new DynamoDBClient({});
-const tableName = process.env.DYNAMO_TABLE;
+const tableName = process.env.DYNAMODB_TABLE;
 const responseHeaders = {
 	"Content-Type": "application/json",
 };
@@ -38,18 +38,20 @@ module.exports.createReservation = async (event) => {
 	};
 
 	const command = new PutItemCommand(record);
+	var statusCode;
+	var responseBody;
 
 	try {
 		const createResponse = await ddbClient.send(command);
 		console.log("Create Item Response:", createResponse);
 
-		var statusCode = createResponse.$metadata.httpStatusCode;
-		var responseBody = `Reservation created with ID: ${reservationId}`
+		statusCode = createResponse.$metadata.httpStatusCode;
+		responseBody = `Reservation created with ID: ${reservationId}`;
 	}
 	catch (ConditionalCheckFailedException) {
-		console.log(ConditionalCheckFailedException)
-		var statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
-		var responseBody = `Reservation ID: ${reservationId} already exists`
+		console.log(ConditionalCheckFailedException);
+		statusCode = ConditionalCheckFailedException.$metadata.httpStatusCode;
+		responseBody = `Reservation ID: ${reservationId} already exists`;
 	}
 
 	const returnResponse = {
@@ -59,4 +61,4 @@ module.exports.createReservation = async (event) => {
 	};
 
 	return returnResponse;
-}
+};
