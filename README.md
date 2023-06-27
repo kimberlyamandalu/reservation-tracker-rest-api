@@ -1,5 +1,7 @@
 # reservation-tracker-rest-api
 
+A Reservation Tracker Service that performs CRUD operations against data stored in DynamoDB by calling API endpoints hosted on AWS API Gateway that proxies the requests to Lambda Functions.
+
 ### CI/CD
 #### Serverless Framework CI/CD
 ##### AWS Providers
