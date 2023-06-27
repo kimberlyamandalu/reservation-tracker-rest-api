@@ -1,17 +1,24 @@
 # reservation-tracker-rest-api
 
-CI/CD Setup
-1. Login to Serverless
-2. Navigate to `app` and add an application
-3. Add `app` and `org` to `serverless.yml`
-    - set `org` property to the Serverless Framework Org (ex. `kimberlyamandalu`)
-4. Login using AWS profile
-		```bash
-		serverless login
-		Logging into the Serverless Dashboard via the browser
-		If your browser does not open automatically, please open this URL:
-		https://app.serverless.com?client=cli&transactionId=N949o1M2RPcv-CadcQxdz
+### CI/CD
+#### Serverless Framework CI/CD
+##### AWS Providers
+AWS Accounts where resources will be deployed. In our example, we have 2 AWS accounts for `Dev` and `Prod`.
+We link each AWS account to our Serverless account as providers.
 
-		✔ You are now logged into the Serverless Dashboard
-		```
-5. Redeploy the project: `sls deploy --stage dev --aws-profile dev`
+![AWS Providers](./readme_utils/cicd_aws_providers.png)
+
+##### Serverless Apps
+Allows us to group common services for an application.
+Stages or Deployment Profiles can be configured for a service. Each can be mapped to a provider.
+In our example, `prod` and `dev` stages are created and will serve as our environments.
+
+![Serverless Apps](./readme_utils/apps_page.png)
+
+##### Github Configuration
+Configure Github Connection and Repository to be managed by Serverless CI/CD.
+![Github](./readme_utils/cicd_git_config.png)
+
+##### Build and Deploy Service
+This is where we configure which Stage/Environment a branch needs to be deployed to.
+![Build and Deploy](./readme_utils/cicd_build_deploy_config.png)
