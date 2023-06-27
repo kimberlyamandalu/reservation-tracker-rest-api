@@ -1,6 +1,7 @@
 # Node Modules
 node_modules/
 package-lock.json
+demo_notes.txt
 
 .DS_Store
 
